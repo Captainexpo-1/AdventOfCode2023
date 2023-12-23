@@ -36,6 +36,7 @@ broadcaster -> gb, ht, vk, zz
 &hf -> mg
 %bm -> zs
 %bk -> zg
+%bk -> zg
 %pq -> th, mj
 %xf -> ff, db
 &th -> bn, gb, tt, hf, bk

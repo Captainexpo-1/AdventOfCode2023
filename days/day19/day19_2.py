@@ -4,7 +4,7 @@ profiler = cProfile.Profile()
 profiler.enable()
 
 f = util.read_file("../data/19.txt")
-fm = """px{a<2006:qkq,m>2090:A,rfg}
+f = """px{a<2006:qkq,m>2090:A,rfg}
 pv{a>1716:R,A}
 lnx{m>1548:A,A}
 rfg{s<537:gd,x>2440:R,A}
@@ -132,28 +132,76 @@ def evaluate_workflow(expression, part):
     else:
         return evaluate_workflow(expression[2], part)
 
-
-overall = 0
-for part in parts:
-    # print(part)
-    # get initial result of workflow
-    result = evaluate_workflow(workflows["in"], part)
-    # print(result)
-    # check if done on first try
-    done = result == "A" or result == "R"
-    # loop while not done
-    while done == False:
-        # get next expression result
-        result = evaluate_workflow(workflows[result], part)
-       #print(result)
+def solve_p1():
+    overall = 0
+    for part in parts:
+        # print(part)
+        # get initial result of workflow
+        result = evaluate_workflow(workflows["in"], part)
         # print(result)
+        # check if done on first try
         done = result == "A" or result == "R"
+        # loop while not done
+        while done == False:
+            # get next expression result
+            result = evaluate_workflow(workflows[result], part)
+           #print(result)
+            # print(result)
+            done = result == "A" or result == "R"
 
-    if result == "A":
-        #print("XMAS", list(part.values()))
-        for xmas in list(part.values()):
-            overall += xmas
+        if result == "A":
+            #print("XMAS", list(part.values()))
+            for xmas in list(part.values()):
+                overall += xmas
+    print(overall)
+def split_range(current, split, is_less_than):
+    """
+    Split a given range into two parts based on a split value.
 
-print(overall)
+    Args:
+    current (tuple[int, int]): The current range as a tuple (low, high).
+    split (int): The value to split the range at.
+    is_less_than (bool): Flag indicating the comparison operation.
+        - If True, compares with 'val < split'.
+        - If False, compares with 'val > split'.
+
+    Returns:
+    tuple[tuple[int, int], tuple[int, int]]: Two ranges resulting from the split.
+        - pos1 contains values where the condition evaluates to False.
+        - pos2 contains values where the condition evaluates to True.
+    """
+    low, high = current
+
+    if is_less_than:
+        # For 'val < split', pos1 contains values >= split
+        pos1 = (split, high)
+        # pos2 contains values < split
+        pos2 = (low, split - 1)
+    else:
+        # For 'val > split', pos1 contains values <= split
+        pos1 = (low, split)
+        # pos2 contains values > split
+        pos2 = (split + 1, high)
+
+    # Ensure the ranges are within the original bounds
+    pos1 = (max(low, pos1[0]), min(high, pos1[1]))
+    pos2 = (max(low, pos2[0]), min(high, pos2[1]))
+
+    return pos1, pos2
+
+def count_ranges(this_range,workflow_name,workflow):
+    if workflow_name == "R":
+        return 0
+    elif workflow_name == "A":
+        print("accepted ranges:",this_range)
+        
+def solve_p2():
+    """finds all ranges that return A"""
+    current_workflow = workflows["in"]
+
+print(split_range((5,10),7,is_less_than=False))
+
+# 7 > 7
+
 profiler.disable()
-profiler.print_stats(sort='cumulative')
+#profiler.print_stats(sort='cumulative')

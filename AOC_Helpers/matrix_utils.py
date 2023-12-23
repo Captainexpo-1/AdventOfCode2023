@@ -5,7 +5,30 @@ def count_in_2d_matrix(vals: str, arr: list[list]):
             if j in vals:
                 total += 1
     return total
+def count_in_list(ls,val):
+    return int(sum(1 for i in ls if i == val))
+def remove_duplicates_across_keys(d):
+    """
+    Remove duplicate values across different keys in a dictionary,
+    where each key maps to a list of bricks.
+    Each brick is represented as [start_point, end_point].
+    """
+    # Create a set for unique bricks across all keys
+    unique_bricks = set()
 
+    for key in d:
+        new_bricks = []
+        for brick in d[key]:
+            # Convert brick to tuple for hashing
+            brick_tuple = tuple(map(tuple, brick))
+            if brick_tuple not in unique_bricks:
+                new_bricks.append(brick)
+                unique_bricks.add(brick_tuple)
+
+        # Update the dictionary with non-duplicate bricks
+        d[key] = new_bricks
+
+    return d
 
 # 2. Grid and Matrix Utilities
 def get_neighbors(x, y, grid):
@@ -16,6 +39,21 @@ def get_neighbors(x, y, grid):
         if 0 <= nx < len(grid) and 0 <= ny < len(grid[0]):
             neighbors.append((nx, ny))
     return neighbors
+
+
+def get_neighbors_with_wrap_around(x, y, grid):
+    directions = [(0, 1, (1,0)), (1, 0, (0,1)), (-1, 0, (0,-1)), (0, -1, (-1,0))]  # 4-directional with labels
+    neighbors = []
+    rows, cols = len(grid), len(grid[0])  # Dimensions of the grid
+
+    for dx, dy, label in directions:
+        nx, ny = (x + dx) % rows, (y + dy) % cols
+        did_wrap_around = (nx != x + dx) or (ny != y + dy)
+        wrap_side = label if did_wrap_around else None
+        neighbors.append(((nx, ny), did_wrap_around, wrap_side))
+
+    return neighbors
+
 
 
 def print_grid(grid):

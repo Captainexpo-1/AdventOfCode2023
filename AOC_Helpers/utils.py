@@ -34,8 +34,17 @@ def read_numbers(file_path):
         list of int: A list of integers parsed from the lines in the file.
     """
     return [int(line) for line in read_lines(file_path)]
-
-
+def replace_all_in2d(grid,rep,new):
+    nn = []
+    for i in grid:
+        n = []
+        for j in i:
+            if j in rep:
+                n.append(new)
+            else:
+                n.append(j)
+        nn.append(n)
+    return nn
 def read_grid(file_path):
     """
     Read a grid from a text file and return it as a list of lists.

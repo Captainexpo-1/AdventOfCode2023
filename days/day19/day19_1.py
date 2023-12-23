@@ -1,5 +1,6 @@
 import AOC_Helpers as util
 import cProfile
+
 profiler = cProfile.Profile()
 profiler.enable()
 
@@ -40,6 +41,8 @@ def parse_specific_input(input_str):
     values = [value.split(":") if ':' in value else [value] for value in values_str.split(",")]
 
     return {key: parse_item(key, {key: values})}
+
+
 def parse_bulk_input(input_str):
     # Splitting the input string into multiple lines
     lines = input_str.strip().split("\n")
@@ -56,6 +59,7 @@ def parse_bulk_input(input_str):
         parsed_result[key] = parse_item(key, {key: values})
 
     return parsed_result
+
 
 def parse_item(item, workflows):
     def parse_branch(workflows, start_index):
@@ -114,7 +118,7 @@ def do_lt_gt(exp, part):
 
 
 def evaluate_workflow(expression, part):
-    #print("EXP",expression[0])
+    # print("EXP",expression[0])
     if list_contains(expression[0], list(workflows.keys())):
         return expression[0]
     if expression[0] == "A" or expression[0] == "R":
@@ -142,15 +146,15 @@ for part in parts:
     # check if done on first try
     done = result == "A" or result == "R"
     # loop while not done
-    while done == False:
+    while not done:
         # get next expression result
         result = evaluate_workflow(workflows[result], part)
-       #print(result)
+        # print(result)
         # print(result)
         done = result == "A" or result == "R"
 
     if result == "A":
-        #print("XMAS", list(part.values()))
+        # print("XMAS", list(part.values()))
         for xmas in list(part.values()):
             overall += xmas
 

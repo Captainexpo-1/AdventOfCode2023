@@ -1,4 +1,4 @@
-import queue
+from math import lcm
 
 import AOC_Helpers as util
 import cProfile
@@ -43,6 +43,19 @@ print(all_lbls)
 print(conjunctor_memories, type(conjunctor_memories))
 pulse_queue = deque()
 
+modules_to_mod_to_rx = {}
+mod_to_rx = ""
+for i in conjunctors.keys():
+    cur=conjunctors[i]
+    if "rx" in cur["sig"]:
+        mod_to_rx = i
+        break
+for i in conjunctors.keys():
+    cur=conjunctors[i]
+    if mod_to_rx in cur["sig"]:
+        modules_to_mod_to_rx[i] = None
+#print(modules_to_mod_to_rx,"MOD", mod_to_rx)
+
 
 def init_conjunctors() -> None:
     for cur_conj in conjunctors.keys():
@@ -74,6 +87,13 @@ def inv_val(val):
 
 
 def send_individual(source, val, dest: str):
+    if val == HIGH and dest in modules_to_mod_to_rx.keys() and presses > 120:
+        print(dest, modules_to_mod_to_rx.keys(), val)
+        modules_to_mod_to_rx[dest] = presses
+        if None not in modules_to_mod_to_rx.values():
+            print(lcm(*modules_to_mod_to_rx.values()),modules_to_mod_to_rx.values())
+            #quit()
+
     if dest in conjunctors.keys():
         conjunctor_memories[dest][source] = val # CORRECT
         do_low = True
@@ -94,10 +114,10 @@ def send_pulse(pulse: dict):
     for i in pulse["sig"]:  # for every output
         if "broad" in list(pulse.keys()):  # if pulse is sent by broadcast
             # is broadcast
-            print("broadcaster", ("-low" if pulse["val"] == LOW else "-high")+"->",i)
+            #print("broadcaster", ("-low" if pulse["val"] == LOW else "-high")+"->",i)
             send_individual(pulse["src"], pulse["val"], i)
         elif pulse["val"] == HIGH or pulse["val"] == LOW:
-            print(pulse["src"], ("-low" if pulse["val"] == LOW else "-high")+"->",i)
+            #print(pulse["src"], ("-low" if pulse["val"] == LOW else "-high")+"->",i)
             send_individual(pulse["src"], pulse["val"], i)
         else:
             pass
@@ -118,10 +138,13 @@ def push_button():
         if pulse["val"] == LOW: low_pulses += len(pulse["sig"])
         send_pulse(pulse)
         # print("PULSE", pulse)
-    print(low_pulses * high_pulses)
+    #print(low_pulses * high_pulses)
 
-
-for i in range(1000):
+presses = 1
+while True:
     push_button()
+    presses += 1
+    if presses % 10000 == 0:print(presses)
+
 profiler.disable()
-#profiler.print_stats(sort="cumulative")
+profiler.print_stats(sort="cumulative")
