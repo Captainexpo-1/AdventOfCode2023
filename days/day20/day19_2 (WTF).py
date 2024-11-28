@@ -3,7 +3,7 @@ from math import lcm
 import AOC_Helpers as util
 import cProfile
 from collections import deque
-
+import math
 profiler = cProfile.Profile()
 profiler.enable()
 
@@ -87,12 +87,11 @@ def inv_val(val):
 
 
 def send_individual(source, val, dest: str):
-    if val == HIGH and dest in modules_to_mod_to_rx.keys() and presses > 120:
-        print(dest, modules_to_mod_to_rx.keys(), val)
+    if val == LOW and dest in modules_to_mod_to_rx.keys() :
         modules_to_mod_to_rx[dest] = presses
-        if None not in modules_to_mod_to_rx.values():
-            print(lcm(*modules_to_mod_to_rx.values()),modules_to_mod_to_rx.values())
-            #quit()
+    if None not in modules_to_mod_to_rx.values():
+        print(math.lcm(*modules_to_mod_to_rx.values()), modules_to_mod_to_rx.values())
+        quit()
 
     if dest in conjunctors.keys():
         conjunctor_memories[dest][source] = val # CORRECT
@@ -101,7 +100,6 @@ def send_individual(source, val, dest: str):
             if val == LOW:
                 do_low = False
         conjunctors[dest]["val"] = LOW if do_low else HIGH
-        #if dest == "con": print(conjunctor_memories["con"])
         pulse_queue.append(conjunctors[dest])
     elif dest in flip_flops.keys():
         if val == LOW:
@@ -113,11 +111,8 @@ def send_pulse(pulse: dict):
     #print("SIG",pulse["sig"])
     for i in pulse["sig"]:  # for every output
         if "broad" in list(pulse.keys()):  # if pulse is sent by broadcast
-            # is broadcast
-            #print("broadcaster", ("-low" if pulse["val"] == LOW else "-high")+"->",i)
             send_individual(pulse["src"], pulse["val"], i)
         elif pulse["val"] == HIGH or pulse["val"] == LOW:
-            #print(pulse["src"], ("-low" if pulse["val"] == LOW else "-high")+"->",i)
             send_individual(pulse["src"], pulse["val"], i)
         else:
             pass
@@ -144,7 +139,9 @@ presses = 1
 while True:
     push_button()
     presses += 1
-    if presses % 10000 == 0:print(presses)
+    if presses % 10000 == 0:
+        print(presses)
 
 profiler.disable()
 profiler.print_stats(sort="cumulative")
+#240853834793347 dict_values([3793, 3947, 4003, 4019])
